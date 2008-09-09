@@ -1,6 +1,15 @@
 class Equation
   attr_accessor :genes
 
+  def self.run(number = 100)
+    colony = generate(number)
+    while colony.max.fitness != 1/0.0
+      puts "Best: #{colony.max.equation}=#{colony.max.evaluate}"
+      colony = next_generation(colony)
+    end
+    puts "Found: #{colony.max.equation}=#{colony.max.evaluate}"
+  end
+  
   def self.generate(number = 100)
     (0..number).collect do
       Equation.new
