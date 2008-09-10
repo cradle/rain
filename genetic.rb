@@ -3,7 +3,7 @@ class Equation
 
   def self.run(number = 100)
     colony = generate(number)
-    while colony.max.fitness != 1/0.0
+    while colony.max.fitness != 1/0
       puts "Best: #{colony.max.equation}=#{colony.max.evaluate}"
       colony = next_generation(colony)
     end
@@ -27,7 +27,7 @@ class Equation
   end
 
   def self.select_perfect(collection)
-    collection.select {|c| c.fitness == 1/0.0 }
+    collection.select {|c| c.fitness == 1/0 }
   end
 
   def self.next_generation(collection)
@@ -84,12 +84,30 @@ class Equation
     if evaluate == nil
       0
     else
-      (1 / (42.0 - evaluate)).abs
+      (1 / (42 - evaluate)).abs
     end
   end
 
   def breed(other)
-    slice_point = rand(GENE_LENGTH*NUMBER_OF_GENES)
-    Equation.new(@genes[0..slice_point] + other.genes[(slice_point+1)..-1])
+    if rand < 0.7
+      slice_point = rand(GENE_LENGTH*NUMBER_OF_GENES)
+      new_genes = @genes[0..slice_point] + other.genes[(slice_point+1)..-1]
+      if rand < 0.01
+        puts "Mutating: #{new_genes}"
+        gene_index = rand(GENE_LENGTH)
+        new_genes[gene_index] = new_genes[gene_index].chr == '0' ? '1' : '0'
+        puts "        : " + (" "*gene_index) + "|"
+        puts "Mutated : #{new_genes}"
+      end
+      Equation.new(new_genes)
+    else
+      Equation.new(@genes)
+    end
+  end
+end
+
+class Fixnum
+  def /(other)
+    to_f / other.to_f
   end
 end
